@@ -1,0 +1,44 @@
+pluto:
+  nacos:
+    ip: @nacos.ip@
+    port: @nacos.port@
+    namespace: @nacos.namespace@
+    username: @nacos.username@
+    password: @nacos.password@
+
+
+spring:
+  application:
+    name: @project.artifactId@
+  profiles:
+    active: @profile.active@
+  data:
+    redis:
+      host:
+  cloud:
+    nacos:
+      config:
+        server-addr: ${pluto.nacos.ip}:${pluto.nacos.port}
+        file-extension: yml
+        namespace: ${pluto.nacos.namespace}
+        username: ${pluto.nacos.username}
+        password: ${pluto.nacos.password}
+        shared-configs:
+          - data-id: mysql.yml
+            group: DEFAULT_GROUP
+            refresh: true
+          - data-id: redis.yml
+            group: DEFAULT_GROUP
+            refresh: true
+        access-key:
+      discovery:
+        username: ${pluto.nacos.username}
+        password: ${pluto.nacos.password}
+        server-addr: ${pluto.nacos.ip}:${pluto.nacos.port}
+        namespace: ${pluto.nacos.namespace}
+
+logging:
+  file:
+    path: '@logging.file.path@'
+    name: ${logging.file.path}/${spring.application.name}/root.log
+  config: classpath:logback-spring.xml

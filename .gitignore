@@ -28,6 +28,8 @@ logs
 #*.gitignore
 rebel.xml
 target/
+cache/
+device.json
 !.mvn/wrapper/maven-wrapper.jar
 log.path_IS_UNDEFINED
 .DS_Store

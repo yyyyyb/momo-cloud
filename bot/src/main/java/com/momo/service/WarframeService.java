@@ -123,4 +123,28 @@ public interface WarframeService {
      * 执行官任务
      */
     String getArchonHunt();
+
+    /**
+     * 获取英择谛赏金
+     * @return 英择谛赏金
+     */
+    String getEntratiSyndicate();
+
+    /**
+     * 希图斯赏金
+     * @return 希图斯赏金
+     */
+    String getOstronsSyndicate();
+
+    /**
+     * 获取索拉里联盟赏金
+     * @return 索拉里联盟赏金
+     */
+    String getSolarisUnitedSyndicate();
+
+    /**
+     * 获取扎里曼赏金
+     * @return 扎里曼赏金
+     */
+    String getZarimanSyndicate();
 }

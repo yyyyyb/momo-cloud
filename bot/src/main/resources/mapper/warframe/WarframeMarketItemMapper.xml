@@ -1,0 +1,64 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.momo.dao.warframeMarket.WarframeMarketItemMapper">
+
+    <delete id="deleteRelic">
+        delete from b_warframe_market_all_item
+        where id in (select id from b_warframe_relic)
+    </delete>
+
+    <delete id="deletePrime">
+        delete from b_warframe_market_all_item
+        where id in (select id from b_warframe_prime)
+    </delete>
+
+    <delete id="deleteMod">
+        delete from b_warframe_market_all_item
+        where id in (select id from b_warframe_mod)
+    </delete>
+
+    <select id="getWarframeMarketUrl" resultType="com.momo.entity.warframeMarket.WarframeMarketItem">
+        SELECT t.*
+        from (
+                SELECT
+                    prime_id AS itemId,
+                    prime_name AS itemName,
+                    prime_url AS itemUrl
+                FROM
+                    b_warframe_prime
+                WHERE
+                    prime_remark LIKE CONCAT('%',#{query},'%')
+                   OR prime_name LIKE CONCAT('%',#{query},'%')
+                UNION
+                SELECT
+                    mod_id AS itemId,
+                    mod_name AS itemName,
+                    mod_url AS itemUrl
+                FROM
+                    b_warframe_mod
+                WHERE
+                    mod_remark LIKE CONCAT('%',#{query},'%')
+                   OR mod_name LIKE CONCAT('%',#{query},'%')
+                UNION
+                SELECT
+                    relic_id AS itemId,
+                    relic_name AS itemName,
+                    relic_url AS itemUrl
+                FROM
+                    b_warframe_relic
+                WHERE
+                    relic_remark LIKE CONCAT('%',#{query},'%')
+                   OR relic_name LIKE CONCAT('%',#{query},'%')
+                UNION
+                SELECT
+                    item_id AS itemId,
+                    item_name AS itemName,
+                    item_url AS itemUrl
+                FROM
+                    b_warframe_market_all_item
+                WHERE
+                    item_name LIKE CONCAT('%',#{query},'%')
+                ) t
+        ORDER BY t.itemId asc
+    </select>
+</mapper>

@@ -17,6 +17,9 @@ import org.springframework.util.CollectionUtils;
 import org.springframework.web.client.RestTemplate;
 
 import javax.annotation.Resource;
+import java.math.BigDecimal;
+import java.math.RoundingMode;
+import java.util.Arrays;
 import java.util.Comparator;
 import java.util.List;
 
@@ -200,15 +203,6 @@ public class WarframeServiceImpl implements WarframeService {
         }
 
         return result.toString();
-    }
-
-    /**
-     * 获取入侵信息
-     * @return 入侵信息
-     */
-    @Override
-    public String getInvasion() {
-        return null;
     }
 
     /**
@@ -440,6 +434,117 @@ public class WarframeServiceImpl implements WarframeService {
 
         return "Darvo的特卖商品:\n" +
                 dailyDeals;
+    }
+
+    /**
+     * 获取英择谛赏金
+     * @return 英择谛赏金
+     */
+    @Override
+    public String getEntratiSyndicate() {
+        return getSynDicate(1);
+    }
+
+    /**
+     * 希图斯赏金
+     * @return 希图斯赏金
+     */
+    @Override
+    public String getOstronsSyndicate() {
+        return getSynDicate(2);
+    }
+
+    /**
+     * 获取索拉里联盟赏金
+     * @return 索拉里联盟赏金
+     */
+    @Override
+    public String getSolarisUnitedSyndicate() {
+        return getSynDicate(3);
+    }
+
+    /**
+     * 获取扎里曼赏金
+     * @return 扎里曼赏金
+     */
+    @Override
+    public String getZarimanSyndicate() {
+        return getSynDicate(4);
+    }
+
+    /**
+     * 获取赏金任务
+     * 1.英择谛赏金 2.希图斯赏金 3.索拉里联盟赏金 4.扎里曼赏金
+     * @param type 任务类型
+     * @return 赏金任务Str
+     */
+    private String getSynDicate(int type) {
+        initRestTemplate();
+        String syndicateStr = restTemplate.getForObject(WarframeConstants.SYNDICATE_MISSIONS_URL, String.class);
+        TypeReference<List<SyndicateMission>> typeRef = new TypeReference<>() {};
+        List<SyndicateMission> syndicateMissions = getListFormat(syndicateStr, typeRef);
+
+        assert syndicateMissions != null;
+
+        String result = null;
+        if (type == 1) {
+            List<SyndicateMission> collect = syndicateMissions.stream().filter(t -> "Entrati".equals(t.getSyndicateKey())).toList();
+            result = generateSyndicateMissionStr(collect.getFirst());
+        } else if (type == 2) {
+            List<SyndicateMission> collect = syndicateMissions.stream().filter(t -> "Ostrons".equals(t.getSyndicateKey())).toList();
+            result = generateSyndicateMissionStr(collect.getFirst());
+        } else if (type == 3) {
+            List<SyndicateMission> collect = syndicateMissions.stream().filter(t -> "Solaris United".equals(t.getSyndicateKey())).toList();
+            result = generateSyndicateMissionStr(collect.getFirst());
+        } else if (type == 4) {
+            //目前无扎里曼数据
+            List<SyndicateMission> collect = syndicateMissions.stream().filter(t -> "ZarimanSyndicate".equals(t.getSyndicateKey())).toList();
+            //result = generateSyndicateMissionStr(collect.getFirst());
+        }
+
+        return result;
+    }
+
+    /**
+     * 组装赏金任务文本
+     * @param syndicateMission 赏金任务
+     * @return 赏金任务文本
+     */
+    private String generateSyndicateMissionStr(SyndicateMission syndicateMission) {
+        StringBuilder sb = new StringBuilder();
+
+        int i = 1;
+        for (Job job : syndicateMission.getJobs()) {
+            sb.append(" - 赏金").append(i++).append("\n");
+            sb.append("   - 奖励:").append(Arrays.toString(job.getRewardPool())).append("\n");
+        }
+        return sb.toString();
+    }
+
+    /**
+     * 获取入侵信息
+     * @return 入侵信息
+     */
+    public String getInvasion() {
+        initRestTemplate();
+        String invasionStr = restTemplate.getForObject(WarframeConstants.INVASIONS_URL, String.class);
+        TypeReference<List<Invasions>> typeRef = new TypeReference<>() {};
+        List<Invasions> invasions = getListFormat(invasionStr, typeRef);
+
+        assert invasions != null;
+
+        StringBuilder sb = new StringBuilder();
+        sb.append("当前查询【入侵】").append("\n");
+        int i = 1;
+        for (Invasions invasion : invasions) {
+            if (invasion.getCompleted()) {
+                continue;
+            }
+            BigDecimal bigDecimal = new BigDecimal(invasion.getCompletion());
+            sb.append("-入侵").append(i++).append(" 完成度 ").append(bigDecimal.setScale(2, RoundingMode.HALF_UP)).append("\n");
+            sb.append(invasion.generateStr());
+        }
+        return sb.toString();
     }
 
     /**

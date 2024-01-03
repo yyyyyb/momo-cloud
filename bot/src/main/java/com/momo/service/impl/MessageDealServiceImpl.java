@@ -1,16 +1,20 @@
 package com.momo.service.impl;
 
 import com.baomidou.mybatisplus.core.conditions.query.LambdaQueryWrapper;
+import com.momo.config.BotInfoConfig;
+import com.momo.config.WarframeConfig;
 import com.momo.dao.QueryMethodMapper;
 import com.momo.dto.MessageDTO;
 import com.momo.entity.QueryMethod;
 import com.momo.enumeration.QueryType;
 import com.momo.service.MessageDealService;
+import com.momo.service.WarframeMarketService;
 import com.momo.service.WarframeService;
 import io.micrometer.common.util.StringUtils;
 import jakarta.annotation.Resource;
 import lombok.extern.slf4j.Slf4j;
 import net.mamoe.mirai.Bot;
+import net.mamoe.mirai.contact.User;
 import net.mamoe.mirai.event.events.FriendMessageEvent;
 import net.mamoe.mirai.event.events.GroupMessageEvent;
 import net.mamoe.mirai.event.events.MessageEvent;
@@ -30,6 +34,15 @@ public class MessageDealServiceImpl implements MessageDealService {
 
     @Resource
     private WarframeService warframeService;
+
+    @Resource
+    private WarframeMarketService warframeMarketService;
+
+
+    @Resource
+    private WarframeConfig warframeConfig;
+    @Resource
+    private BotInfoConfig botInfoConfig;
 
     /**
      *
@@ -117,32 +130,59 @@ public class MessageDealServiceImpl implements MessageDealService {
      */
     private void dealMessage(MessageDTO messageDTO, MessageEvent event) {
         //先获取发送者
-        //User user = event.getSender();
+        User user = event.getSender();
 
         String sendMessage = null;
         //1.获取个人信息
         //2.查询服务
         if (StringUtils.isNotBlank(messageDTO.getText())) {
-            String query = messageDTO.getText();
+            String query = messageDTO.getText().toLowerCase();
             //1.wf查询
-            if(query.startsWith("/wf") || query.startsWith("wf")) {
-                String wf = query.toLowerCase().replace("wf", "").replace("/", "").trim();
-                sendMessage = getInfoByWord(QueryType.WARFRAME.getCode(), wf);
+            String wfQuery = warframeConfig.getWfQuery();
+            String[] wfQueryArray = wfQuery.split(",");
+            for (String t: wfQueryArray) {
+                if(query.startsWith(t)) {
+                    String wf = query.replace("wf", "").replace("/", "").trim();
+                    sendMessage = getInfoByWord(QueryType.WARFRAME.getCode(), wf);
+                    break;
+                }
             }
-//            //2.wm查询
-//            if(query.startsWith("/wm") || query.startsWith("wm")) {
-//                String wm = query.toLowerCase().replace("wm", "").replace("/", "");
-//            }
+
+            //2.wm查询
+            String wmQuery = warframeConfig.getWmQuery();
+            String[] wmQueryArray = wmQuery.split(",");
+            for (String t: wmQueryArray) {
+                if(query.startsWith(t)) {
+                    String wm = query.replace("wm", "").replace("/", "").trim();
+                    sendMessage = warframeMarketService.getWarframeMarketInfo(wm.replace(" ", ""));
+                    break;
+                }
+            }
+
 //            //3.紫卡查询
-//            if(query.startsWith("/wmr") || query.startsWith("wmr")) {
-//
+//            String wmrQuery = warframeConfig.getWmrQuery();
+//            String[] wmrQueryArray = wmrQuery.split(",");
+//            for (String t: wmrQueryArray) {
+//                if(query.startsWith(t)) {
+//                }
 //            }
+//
 //            //4.遗物查询
-//            if(query.startsWith("/rel") || query.startsWith("rel")) {
-//
+//            String relicQuery = warframeConfig.getRelicQuery();
+//            String[] relicQueryArray = relicQuery.split(",");
+//            for (String t: relicQueryArray) {
+//                if(query.startsWith(t)) {
+//                }
 //            }
+
+            //3.其他服务
+            if(query.equals("wm数据更新") && user.getId() == botInfoConfig.getAdmin()) {
+                warframeMarketService.getAllItem();;
+                warframeMarketService.dealRelicItem();
+                warframeMarketService.dealPrime();
+                sendMessage = "完成";
+            }
         }
-        //3.其他服务
 
         if (StringUtils.isNotBlank(sendMessage)) {
             event.getSubject().sendMessage(sendMessage);

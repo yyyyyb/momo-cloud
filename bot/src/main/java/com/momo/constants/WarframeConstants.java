@@ -1,5 +1,8 @@
 package com.momo.constants;
 
+/**
+ * warframe官方url
+ */
 public class WarframeConstants {
 
     /**
@@ -79,7 +82,7 @@ public class WarframeConstants {
     public static final String DAILY_DEALS_URL = "https://api.warframestat.us/pc/dailyDeals?language=zh";
 
     /**
-     * 集团声望任务
+     * 赏金任务
      */
     public static final String SYNDICATE_MISSIONS_URL = "https://api.warframestat.us/pc/syndicateMissions?language=zh";
 }

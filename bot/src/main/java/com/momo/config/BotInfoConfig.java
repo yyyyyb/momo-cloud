@@ -31,4 +31,9 @@ public class BotInfoConfig {
      * 签名文件地址
      */
     private String qsign;
+
+    /**
+     * 管理员
+     */
+    private Long admin;
 }

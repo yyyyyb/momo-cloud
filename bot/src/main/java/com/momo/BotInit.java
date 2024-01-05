@@ -26,9 +26,9 @@ public class BotInit implements ApplicationRunner {
     public void run(ApplicationArguments args){
         try{
             //签名服务启动
-            //qSignInit();
+            qSignInit();
             //机器人初始化
-            //botInit();
+            botInit();
         } catch (Exception e) {
             log.error("机器人登陆失败");
             log.error(e.getMessage());

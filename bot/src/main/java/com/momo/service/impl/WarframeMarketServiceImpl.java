@@ -233,11 +233,8 @@ public class WarframeMarketServiceImpl extends SuperServiceImpl<WarframeMarketIt
         if(!warframeMarketItems.isEmpty()) {
 
             if (warframeMarketItems.size() > 1) {
-                warframeMarketItems.removeFirst();
-                result.append("- 可能想查询");
-                warframeMarketItems.forEach(t -> {
-                    result.append("  - ").append(t.getItemName()).append("\n");
-                });
+                result.append("- 可能想查询").append("\n");
+                warframeMarketItems.forEach(t -> result.append("  - ").append(t.getItemName()).append("\n"));
             } else {
                 WarframeMarketItem warframeMarketItem = warframeMarketItems.getFirst();
                 String url = WarframeMarketConstants.WARFRAME_MARKET_ORDER_URL.replace("{0}", warframeMarketItem.getItemUrl());

@@ -29,8 +29,14 @@ public class WarframeMarketItem extends SuperEntity<Long> {
     private String itemId;
 
     /**
-     * 对应方法
+     * 查询链接
      */
     @TableField(value = "item_url")
     private String itemUrl;
+
+    /**
+     * 查询单词
+     */
+    @TableField(value = "item_query")
+    private String itemQuery;
 }

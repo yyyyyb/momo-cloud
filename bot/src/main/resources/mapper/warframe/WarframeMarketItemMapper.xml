@@ -2,6 +2,26 @@
 <!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
 <mapper namespace="com.momo.dao.warframeMarket.WarframeMarketItemMapper">
 
+    <delete id="deleteAllData1">
+        delete from b_warframe_market_all_item;
+    </delete>
+
+    <delete id="deleteAllData2">
+        delete from b_warframe_mod;
+    </delete>
+
+    <delete id="deleteAllData3">
+        delete from b_warframe_prime;
+    </delete>
+
+    <delete id="deleteAllData4">
+        delete from b_warframe_relic;
+    </delete>
+
+    <delete id="deleteAllData5">
+        delete from b_warframe_wiki_mod;
+    </delete>
+
     <delete id="deleteRelic">
         delete from b_warframe_market_all_item
         where id in (select id from b_warframe_relic)
@@ -58,6 +78,7 @@
                     b_warframe_market_all_item
                 WHERE
                     item_name LIKE CONCAT('%',#{query},'%')
+                    or item_query like CONCAT('%',#{query},'%')
                 ) t
         ORDER BY t.itemId asc
     </select>

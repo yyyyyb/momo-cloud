@@ -7,6 +7,10 @@ import org.springframework.transaction.annotation.Transactional;
  * warframe查询Service
  */
 public interface WarframeMarketService extends SuperService<WarframeMarketItem>{
+    /**
+     * 删除所有的warframe item数据
+     */
+    void deleteAllData();
 
     /**
      * 获取所有的item

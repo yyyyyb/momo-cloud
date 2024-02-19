@@ -46,6 +46,15 @@ public class WarframeMarketServiceImpl extends SuperServiceImpl<WarframeMarketIt
     @Resource
     private WarframeWikiModMapper warframeWikiModMapper;
 
+    @Override
+    public void deleteAllData() {
+        baseMapper.deleteAllData1();
+        baseMapper.deleteAllData2();
+        baseMapper.deleteAllData3();
+        baseMapper.deleteAllData4();
+        baseMapper.deleteAllData5();
+    }
+
     /**
      * 获取所有的item
      */
@@ -62,6 +71,7 @@ public class WarframeMarketServiceImpl extends SuperServiceImpl<WarframeMarketIt
             temp.setItemUrl(t.getUrlName());
             temp.setItemName(t.getItemName());
             temp.setItemId(t.getId());
+            temp.setItemQuery(t.getItemName().replace(" ", ""));
 
             save(temp);
         });
@@ -227,7 +237,6 @@ public class WarframeMarketServiceImpl extends SuperServiceImpl<WarframeMarketIt
         String replace = query.replace(" ", "");
         //模糊搜索
         List<WarframeMarketItem> warframeMarketItems = baseMapper.getWarframeMarketUrl(replace);
-
 
         StringBuilder result = new StringBuilder();
         if(!warframeMarketItems.isEmpty()) {

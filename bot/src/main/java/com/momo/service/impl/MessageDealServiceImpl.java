@@ -177,6 +177,9 @@ public class MessageDealServiceImpl implements MessageDealService {
 
             //3.其他服务
             if(query.equals("wm数据更新") && user.getId() == botInfoConfig.getAdmin()) {
+                //先删除所有的数据
+                warframeMarketService.deleteAllData();
+                //新增数据
                 warframeMarketService.getAllItem();;
                 warframeMarketService.dealRelicItem();
                 warframeMarketService.dealPrime();

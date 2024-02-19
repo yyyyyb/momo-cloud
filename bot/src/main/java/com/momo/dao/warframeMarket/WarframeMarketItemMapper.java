@@ -10,6 +10,11 @@ import java.util.List;
 
 @Repository
 public interface WarframeMarketItemMapper extends SuperMapper<WarframeMarketItem> {
+    void deleteAllData1();
+    void deleteAllData2();
+    void deleteAllData3();
+    void deleteAllData4();
+    void deleteAllData5();
 
     void deleteRelic();
 
